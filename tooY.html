@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>ข้อความถึงหยก</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#ffe3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600&family=Noto+Sans+Thai:wght@600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg1:#ffe3ec; --bg2:#fff1e6; --ink:#4a3340; --muted:#a07a8b; --accent:#ff6f9f; --shadow:0 12px 30px rgba(255,120,160,.28);
+  --c0a:#fff0f5; --c0b:#ffd6e4; --c1a:#fff6e0; --c1b:#ffe0b8; --c2a:#ffeef8; --c2b:#f6d4ff;
+  --c3a:#eaf6ff; --c3b:#cfe6ff; --c4a:#effbe9; --c4b:#cdf0c4;
+  --bar-bg:#fff; --bar-line:#4a3340;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg1:#2a1720; --bg2:#1f1a2b; --ink:#ffeaf2; --muted:#c9a0b3; --accent:#ff8fb1; --shadow:0 12px 30px rgba(0,0,0,.45);
+    --c0a:#4a2535; --c0b:#3a1d2a; --c1a:#4a3a22; --c1b:#3a2d1a; --c2a:#46284a; --c2b:#33203a;
+    --c3a:#25384f; --c3b:#1d2b3d; --c4a:#2b4528; --c4b:#213620;
+    --bar-bg:#3a2a3a; --bar-line:#ffeaf2;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg1:#2a1720; --bg2:#1f1a2b; --ink:#ffeaf2; --muted:#c9a0b3; --accent:#ff8fb1; --shadow:0 12px 30px rgba(0,0,0,.45);
+  --c0a:#4a2535; --c0b:#3a1d2a; --c1a:#4a3a22; --c1b:#3a2d1a; --c2a:#46284a; --c2b:#33203a;
+  --c3a:#25384f; --c3b:#1d2b3d; --c4a:#2b4528; --c4b:#213620;
+  --bar-bg:#3a2a3a; --bar-line:#ffeaf2;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  font-family:"Mali","Thonburi","Sukhumvit Set",system-ui,sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));
+  color:var(--ink);
+  overflow:hidden;
+  touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;
+}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;transition:opacity .6s ease}
+.screen.hide{opacity:0;pointer-events:none}
+
+/* loading */
+#loading{gap:22px}
+#pix,#cpix{width:min(80vw,320px);height:min(80vw,320px);image-rendering:pixelated;image-rendering:crisp-edges}
+.pxfont{font-family:"Press Start 2P","Mali",monospace}
+#ltitle{font-size:14px;letter-spacing:1px;text-align:center;line-height:1.8}
+.bar{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;width:min(78vw,300px);padding:5px;background:var(--bar-bg);border:3px solid var(--bar-line)}
+.bar i{height:14px;background:transparent}
+.bar i.on{background:var(--accent)}
+#pct{font-size:12px}
+#lsub{font-size:15px;color:var(--muted);text-align:center}
+
+/* slides */
+#slides{padding:0}
+.float{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.float span{position:absolute;bottom:-40px;opacity:0;animation:rise 9s linear infinite;font-size:20px}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.7}100%{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+#stage{position:relative;width:100%;max-width:420px;height:min(70vh,520px);margin:0 auto}
+.card{
+  position:absolute;inset:0;border-radius:36px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:32px;text-align:center;
+  border:3px solid rgba(255,255,255,.6);
+  background:rgba(255,255,255,.4);color:#4a3340;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.emoji{font-size:72px;line-height:1;animation:wob 2.4s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(-6deg) scale(1)}50%{transform:rotate(6deg) scale(1.08)}}
+.msg{font-family:'Noto Sans Thai','Thonburi','Sukhumvit Set',system-ui,sans-serif;font-size:32px;font-weight:700;line-height:1.6;margin:0;color:#fff;text-shadow:0 2px 10px rgba(150,30,80,.45)}
+.card.in{animation:cin .55s cubic-bezier(.2,1.3,.4,1) both}
+.card.out{animation:cout .5s ease-in forwards}
+@keyframes cin{from{opacity:0;transform:translateY(40px) scale(.8) rotate(6deg)}to{opacity:1;transform:none}}
+@keyframes cout{to{opacity:0;transform:translateX(-130%) rotate(-14deg)}}
+#dots{display:flex;gap:10px;margin-top:26px}
+#dots b{width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.35;transition:all .3s}
+#dots b.on{opacity:1;background:var(--accent);transform:scale(1.35)}
+#hint{margin-top:14px;height:24px;font-size:15px;color:var(--muted);animation:nudge 1.4s ease-in-out infinite;transition:opacity .4s}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+#cheer{gap:18px;cursor:pointer}
+#tapHint{font-family:'Noto Sans Thai','Thonburi','Sukhumvit Set',system-ui,sans-serif;font-size:24px;font-weight:700;color:#fff;text-align:center;text-shadow:2px 0 0 #c2336b,-2px 0 0 #c2336b,0 2px 0 #c2336b,0 -2px 0 #c2336b,1.5px 1.5px 0 #c2336b,-1.5px 1.5px 0 #c2336b,1.5px -1.5px 0 #c2336b,-1.5px -1.5px 0 #c2336b,0 4px 12px rgba(150,30,80,.5);animation:nudge 1.4s ease-in-out infinite}
+#fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.fxi{position:absolute;left:0;top:0;will-change:transform}
+.fxi .pop{width:100%;height:100%;animation:fxpop .45s cubic-bezier(.2,1.7,.4,1) both}
+.fxi svg{width:100%;height:100%;display:block;shape-rendering:crispEdges;filter:drop-shadow(0 3px 0 rgba(0,0,0,.12))}
+@keyframes fxpop{from{transform:scale(0)}to{transform:scale(1)}}
+#bigtext{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;pointer-events:none}
+#bigtext.show{display:flex}
+#bigtext span{font-family:'Noto Sans Thai','Thonburi','Sukhumvit Set',system-ui,sans-serif;font-size:min(17vw,15vh,140px);font-weight:700;line-height:1.3;color:#fff;white-space:nowrap;transform:rotate(-35deg);text-shadow:3px 0 0 #c2336b,-3px 0 0 #c2336b,0 3px 0 #c2336b,0 -3px 0 #c2336b,2px 2px 0 #c2336b,-2px 2px 0 #c2336b,2px -2px 0 #c2336b,-2px -2px 0 #c2336b,0 6px 16px rgba(150,30,80,.5);animation:bigpop .6s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes bigpop{from{transform:rotate(-35deg) scale(.3);opacity:0}to{transform:rotate(-35deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.float{display:none}.emoji,#hint{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="screen" id="loading">
+  <canvas id="pix" width="32" height="32"></canvas>
+  <div id="ltitle" class="pxfont">LOADING</div>
+  <div class="bar" id="bar"></div>
+  <div id="pct" class="pxfont">0%</div>
+  <div id="lsub">ลิงแดกกล้วย 🍌</div>
+</div>
+
+<div class="screen hide" id="slides">
+  <div class="float" id="float"></div>
+  <div id="stage"></div>
+  <div id="dots"></div>
+  <div id="hint">แตะเพื่อไปต่อ ♡</div>
+</div>
+
+<div class="screen hide" id="cheer">
+  <canvas id="cpix" width="32" height="32"></canvas>
+  <div id="tapHint">ลองกดหน้าจอรัวๆดูสิ</div>
+  <div id="fx"></div>
+  <div id="bigtext"><span>ไม่มีไรละ<br>ไปอนสไป</span></div>
+</div>
+
+<script>
+/* ---------- 8-bit monkey loading ---------- */
+var cv = document.getElementById("pix");
+var ctx = cv.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+var B="#8b5a2b", D="#5c3a1a", T="#f2c99a", K="#222", W="#fff", M="#b03030",
+    Y="#ffd93b", YS="#e0a820", G="#6cc36a", GD="#4a9c4a", HR="#ff5a7a", SKY="#bfe8ff";
+function r(x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(x,y,w,h); }
+function heart(x,y){ r(x+1,y,1,1,HR); r(x+3,y,1,1,HR); r(x,y+1,5,1,HR); r(x+1,y+2,3,1,HR); r(x+2,y+3,1,1,HR); }
+
+var crumbs = [], lastOpen = false;
+var LOAD_MS = 5000, BANANA = 11;
+
+function drawScene(t, dt){
+  var done = t >= LOAD_MS;
+  var open = !done && (Math.floor(t/260) % 2 === 1);
+  if (open && !lastOpen){
+    for (var i=0;i<3;i++) crumbs.push({x:13+Math.random()*6, y:19, vx:(Math.random()-.5)*8, vy:-4-Math.random()*3});
+  }
+  lastOpen = open;
+  var bob = open ? 1 : 0;
+
+  ctx.clearRect(0,0,32,32);
+  r(0,30,32,2,G); r(0,30,32,1,GD);
+
+  // tail
+  r(22,24,4,2,B); r(25,19,2,6,B); r(24,18,2,2,B);
+  // body + belly + feet
+  r(10,18,12,10,B); r(12,20,8,6,T);
+  r(9,27,5,3,D); r(18,27,5,3,D);
+  // head
+  r(9,6+bob,14,12,B);
+  r(6,9+bob,3,5,B); r(23,9+bob,3,5,B); r(7,10+bob,1,3,T); r(24,10+bob,1,3,T);
+  r(11,10+bob,10,7,T); r(12,9+bob,8,1,T);
+  // eyes
+  if (done){
+    r(12,12+bob,1,1,K); r(13,11+bob,2,1,K); r(15,12+bob,1,1,K);
+    r(17,12+bob,1,1,K); r(18,11+bob,2,1,K); r(20,12+bob,1,1,K);
+  } else {
+    r(13,11+bob,2,2,K); r(18,11+bob,2,2,K); r(13,11+bob,1,1,W); r(18,11+bob,1,1,W);
+  }
+  r(15,13+bob,2,1,D);
+  // mouth
+  if (done){ r(14,15+bob,4,1,K); r(13,14+bob,1,1,K); r(18,14+bob,1,1,K); }
+  else if (open){ r(14,15+bob,4,2,M); }
+  else { r(14,15+bob,4,1,K); }
+
+  // banana
+  var p = Math.min(1, t / LOAD_MS);
+  var n = done ? 0 : Math.max(1, Math.ceil(BANANA * (1 - p)));
+  if (n > 0){
+    var xEnd = 21, start = xEnd - n + 1;
+    for (var i=0;i<n;i++){
+      var x = start + i, yy = (i===0 || i===n-1) ? 20 : 19;
+      r(x,yy,1,1,Y); r(x,yy+1,1,1,YS);
+    }
+    r(xEnd+1,20,1,1,D);
+    r(start-2,19,2,3,D); r(xEnd+1,19,2,3,D);
+  } else {
+    // peel left on the ground
+    r(14,29,4,1,Y); r(14,28,1,1,YS); r(17,28,1,1,YS);
+  }
+
+  // crumbs
+  for (var c=crumbs.length-1;c>=0;c--){
+    var q = crumbs[c];
+    q.vy += 22*dt; q.x += q.vx*dt; q.y += q.vy*dt;
+    if (q.y > 29){ crumbs.splice(c,1); continue; }
+    r(Math.round(q.x), Math.round(q.y), 1, 1, Y);
+  }
+
+  // hearts when finished
+  if (done){
+    var hy = Math.round(Math.sin(t/250)*1);
+    heart(3,5+hy); heart(24,3-hy);
+  }
+}
+
+/* progress bar */
+var bar = document.getElementById("bar");
+var blocks = [];
+for (var i=0;i<20;i++){ var b=document.createElement("i"); bar.appendChild(b); blocks.push(b); }
+var pct = document.getElementById("pct");
+var ltitle = document.getElementById("ltitle");
+var lsub = document.getElementById("lsub");
+
+var t0 = null, last = null, finished = false;
+function loop(now){
+  if (t0 === null){ t0 = now; last = now; }
+  var t = now - t0, dt = Math.min(.05,(now - last)/1000);
+  last = now;
+  drawScene(t, dt);
+  var p = Math.min(1, t / LOAD_MS);
+  var on = Math.floor(p * 20);
+  for (var i=0;i<20;i++) blocks[i].className = i < on ? "on" : "";
+  pct.textContent = Math.floor(p*100) + "%";
+  if (p >= 1 && !finished){
+    finished = true;
+    ltitle.textContent = "DONE!";
+    lsub.textContent = "กินหมดแล้ว อิ่มจัง 🍌";
+    setTimeout(showSlides, 900);
+  }
+  if (!(finished && t > LOAD_MS + 1500)) requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ---------- slides ---------- */
+var MESSAGES = [
+  {t:"เป็นไงบ้าง เหนื่อยมั้ย", e:"🥺"},
+  {t:"ภูเป็นกำลังใจให้อยู่นะ", e:"💗"},
+  {t:"สู้ๆ นะหยก", e:"💪"}
+];
+var stage = document.getElementById("stage");
+var dotsEl = document.getElementById("dots");
+var hint = document.getElementById("hint");
+var idx = 0, locked = true, dots = [];
+
+for (var d=0; d<MESSAGES.length; d++){
+  var dot = document.createElement("b"); dotsEl.appendChild(dot); dots.push(dot);
+}
+function makeCard(i){
+  var c = document.createElement("div");
+  c.className = "card c" + i + " in";
+  c.innerHTML = '<p class="msg"></p>';
+  c.querySelector(".msg").textContent = MESSAGES[i].t;
+  return c;
+}
+function updateUI(){
+  for (var i=0;i<dots.length;i++) dots[i].className = i === idx ? "on" : "";
+  hint.style.opacity = idx === MESSAGES.length - 1 ? "0" : "1";
+}
+function showSlides(){
+  document.getElementById("loading").classList.add("hide");
+  document.getElementById("slides").classList.remove("hide");
+  stage.appendChild(makeCard(0));
+  updateUI();
+  setTimeout(function(){ locked = false; }, 600);
+}
+function next(){
+  if (locked) return;
+  if (idx >= MESSAGES.length - 1){ finish(); return; }
+  locked = true;
+  var old = stage.lastElementChild;
+  old.classList.remove("in"); old.classList.add("out");
+  idx++;
+  stage.appendChild(makeCard(idx));
+  updateUI();
+  setTimeout(function(){ old.remove(); locked = false; }, 520);
+}
+/* ---------- cheering monkey ---------- */
+var cctx = document.getElementById('cpix').getContext('2d');
+cctx.imageSmoothingEnabled = false;
+var hearts = [], nextHeart = 0;
+function heartC(x,y,c){ r(x+1,y,1,1,c); r(x+3,y,1,1,c); r(x,y+1,5,1,c); r(x+1,y+2,3,1,c); r(x+2,y+3,1,1,c); }
+
+function drawCheer(t, dt){
+  var prev = ctx; ctx = cctx;
+  ctx.clearRect(0,0,32,32);
+  var o = -Math.round(Math.abs(Math.sin(t/230))*4);
+  var f = Math.floor(t/230) % 2;
+
+  // floating hearts (behind the monkey, rising out around it)
+  nextHeart -= dt;
+  if (nextHeart <= 0){
+    nextHeart = .3 + Math.random()*.25;
+    hearts.push({x:1+Math.random()*26, y:14+Math.random()*8, s:5+Math.random()*3, ph:Math.random()*6, c:Math.random()<.5 ? HR : '#ff8fb1'});
+  }
+  for (var i=hearts.length-1;i>=0;i--){
+    var hh = hearts[i];
+    hh.y -= hh.s*dt;
+    if (hh.y < -4){ hearts.splice(i,1); continue; }
+    heartC(Math.round(hh.x + Math.sin(t/400+hh.ph)*1.5), Math.round(hh.y), hh.c);
+  }
+
+  r(0,30,32,2,G); r(0,30,32,1,GD);
+
+  // tail
+  r(22,24+o,4,2,B); r(25,19+o,2,6,B); r(24,18+o,2,2,B);
+  // arms up, waving
+  var h = f ? 1 : 0;
+  r(9,17+o,2,2,B); r(7,15+o,2,2,B); r(5,13+o,2,2,B); r(4,11+h+o,2,2,B); r(3,9+h+o,3,3,D);
+  r(21,17+o,2,2,B); r(23,15+o,2,2,B); r(25,13+o,2,2,B); r(26,11+h+o,2,2,B); r(26,9+h+o,3,3,D);
+  // body + feet
+  r(10,18+o,12,10,B); r(12,20+o,8,6,T);
+  r(9-f,27+o,5,3,D); r(18+f,27+o,5,3,D);
+  // head
+  r(9,6+o,14,12,B); r(6,9+o,3,5,B); r(23,9+o,3,5,B); r(7,10+o,1,3,T); r(24,10+o,1,3,T);
+  r(11,10+o,10,7,T); r(12,9+o,8,1,T);
+  // happy eyes, nose, open smile, blush
+  r(12,12+o,1,1,K); r(13,11+o,2,1,K); r(15,12+o,1,1,K);
+  r(17,12+o,1,1,K); r(18,11+o,2,1,K); r(20,12+o,1,1,K);
+  r(15,13+o,2,1,D);
+  r(13,14+o,1,1,K); r(18,14+o,1,1,K); r(14,15+o,4,2,M);
+  r(11,14+o,2,1,'#ff9bb0'); r(19,14+o,2,1,'#ff9bb0');
+  ctx = prev;
+}
+
+var cheering = false;
+function startCheer(){
+  if (cheering) return;
+  cheering = true;
+  var c0 = null, cl = null;
+  function frame(now){
+    if (c0 === null){ c0 = now; cl = now; }
+    var dt = Math.min(.05, (now - cl)/1000); cl = now;
+    drawCheer(now - c0, dt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+function finish(){
+  locked = true;
+  var old = stage.lastElementChild;
+  old.classList.remove('in'); old.classList.add('out');
+  setTimeout(function(){
+    document.getElementById('slides').classList.add('hide');
+    document.getElementById('cheer').classList.remove('hide');
+    startCheer();
+  }, 520);
+}
+
+/* ---------- tap to spawn hearts and bananas ---------- */
+var cheerEl = document.getElementById('cheer');
+var fx = document.getElementById('fx');
+var bigtext = document.getElementById('bigtext');
+var PINKS = ['#ff6f9f','#ff8fb1','#ffa6c1','#ff5a8a','#f78fb3','#ff9ec4','#e86a92','#ffb3c9','#ff7aa8','#fb7fa6'];
+var HEART = ['.XX.XX.','XWXXXXX','XXXXXXX','.XXXXX.','..XXX..','...X...'];
+var BANANA = ['BY......YB','.YY....YY.','.YYYYYYYY.','..SYYYYS..','...SSSS...'];
+var taps = 0, items = [], fxRunning = false, fxLast = 0;
+
+function pixSVG(rows, colors){
+  var h = rows.length, w = rows[0].length, s = '';
+  for (var y=0;y<h;y++){
+    for (var x=0;x<w;x++){
+      var ch = rows[y].charAt(x);
+      if (ch === 'W') s += '<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+colors.X+'"/>';
+      if (colors[ch]) s += '<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+colors[ch]+'"/>';
+    }
+  }
+  return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">'+s+'</svg>';
+}
+function place(it){
+  it.el.style.transform = 'translate('+it.x.toFixed(1)+'px,'+it.y.toFixed(1)+'px) rotate('+it.rot.toFixed(1)+'deg)';
+}
+function spawnItem(px, py){
+  var rect = fx.getBoundingClientRect();
+  var base = document.getElementById('cpix').getBoundingClientRect().width;
+  var size = Math.max(28, base * (1/6 + Math.random() * (1/4 - 1/6)));
+  var isHeart = taps % 2 === 0;
+  var el = document.createElement('div');
+  el.className = 'fxi';
+  el.style.width = size + 'px';
+  el.style.height = size + 'px';
+  var inner = document.createElement('div');
+  inner.className = 'pop';
+  inner.innerHTML = isHeart
+    ? pixSVG(HEART, {X: PINKS[Math.floor(Math.random()*PINKS.length)], W: 'rgba(255,255,255,.75)'})
+    : pixSVG(BANANA, {Y:'#ffd93b', S:'#e0a820', B:'#6b4a1a'});
+  el.appendChild(inner);
+  fx.appendChild(el);
+  var ang = Math.random()*Math.PI*2, sp = 35 + Math.random()*45;
+  var it = {el:el, size:size, x:Math.random()*Math.max(1, rect.width - size), y:Math.random()*Math.max(1, rect.height - size),
+            vx:Math.cos(ang)*sp, vy:Math.sin(ang)*sp, rot:(Math.random()-.5)*50, vr:(Math.random()-.5)*40};
+  place(it);
+  items.push(it);
+  if (items.length > 70){ items.shift().el.remove(); }
+  taps++;
+  if (taps > 10) bigtext.classList.add('show');
+  if (!fxRunning){ fxRunning = true; fxLast = performance.now(); requestAnimationFrame(fxLoop); }
+}
+function fxLoop(now){
+  var dt = Math.min(.05, (now - fxLast)/1000); fxLast = now;
+  var W = fx.clientWidth, H = fx.clientHeight;
+  for (var i=0;i<items.length;i++){
+    var it = items[i];
+    it.x += it.vx*dt; it.y += it.vy*dt; it.rot += it.vr*dt;
+    if (it.x < 0){ it.x = 0; it.vx = Math.abs(it.vx); }
+    if (it.x > W - it.size){ it.x = W - it.size; it.vx = -Math.abs(it.vx); }
+    if (it.y < 0){ it.y = 0; it.vy = Math.abs(it.vy); }
+    if (it.y > H - it.size){ it.y = H - it.size; it.vy = -Math.abs(it.vy); }
+    place(it);
+  }
+  requestAnimationFrame(fxLoop);
+}
+cheerEl.addEventListener('pointerdown', function(e){
+  if (cheerEl.classList.contains('hide')) return;
+  spawnItem(e.clientX, e.clientY);
+});
+
+document.getElementById("slides").addEventListener("click", next);
+
+/* floating decorations */
+var f = document.getElementById("float");
+var fl = ["💗","🌸","✨","💕","🍀"];
+for (var k=0;k<10;k++){
+  var s = document.createElement("span");
+  s.textContent = fl[k % fl.length];
+  s.style.left = (Math.random()*95) + "%";
+  s.style.animationDelay = (Math.random()*9) + "s";
+  s.style.animationDuration = (7 + Math.random()*6) + "s";
+  f.appendChild(s);
+}
+</script>
+</body>
+</html>
